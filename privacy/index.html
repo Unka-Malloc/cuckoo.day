@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en" data-lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Privacy — Cuckoo</title>
+<meta name="title-en" content="Privacy — Cuckoo">
+<meta name="title-zh" content="隐私说明 — 晨昏报">
+<meta name="description" content="Cuckoo turns your mail, code and bills into a personal newspaper, printed every morning and evening. For Mac, iPhone and iPad.">
+<meta name="theme-color" content="#F7F4EC" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#151B1D" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="canonical" href="https://cuckoo.day/privacy/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://cuckoo.day/">
+<meta property="og:title" content="Cuckoo — Your Personal News">
+<meta property="og:description" content="Your mail, code and bills, printed as a newspaper every morning and evening.">
+<meta property="og:image" content="https://cuckoo.day/assets/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/config.js"></script>
+<script src="/assets/site.js"></script>
+</head>
+<body>
+<a class="skip" href="#main"><span data-l="en">Skip to content</span><span data-l="zh">跳到正文</span></a>
+<article class="sheet">
+  <header>
+    <div class="folio">
+      <a class="ed" href="/" style="text-decoration:none"><i></i><span data-l="en">Cuckoo</span><span data-l="zh">晨昏报</span></a>
+      <nav aria-label="Site"><a href="/"><span data-l="en">Home</span><span data-l="zh">首页</span></a><button type="button" onclick="cuckooToggleLanguage()" aria-label="Switch language / 切换语言"><span data-l="en">中文</span><span data-l="zh">English</span></button></nav>
+    </div>
+    <div class="dayrule" aria-hidden="true" style="margin-top:14px"><div class="thick"></div><div class="thin"></div><div class="lit"></div>
+      <span class="tick" style="left:25%">06:00</span><span class="tick" style="left:50%">12:00</span><span class="tick" style="left:75%">18:00</span><div class="sun"></div><span class="now"></span></div>
+  </header>
+  <main id="main" class="article">
+    <div data-l="en"><h1 class="hl h-xl" style="margin-top:20px">Privacy</h1>
+<p class="deck">Cuckoo is built so that your newspaper is made on your device. This summary describes what the app does with your information.</p>
+<h2>No account, no ads, no tracking</h2>
+<p>Cuckoo works without a Cuckoo account or subscription. The app contains no advertising and no analytics or tracking. We do not sell personal information.</p>
+<h2>Your sources are read by your device</h2>
+<p>When you connect Gmail or GitHub, or on the Mac choose Apple Mail accounts or folders, the app reads them directly from your device. Access tokens and your model API key are stored in the system keychain on that device.</p>
+<h2>Your model provider writes the edition</h2>
+<p>To write an edition, translate it or answer a question about a story, the app sends the material involved directly from your device to the model provider you connected , using your own API key. Cuckoo's servers are not involved. The provider's own terms and privacy policy apply to that processing.</p>
+<h2>Where editions are kept</h2>
+<p>Editions, notes and your story feedback are stored on this device, or in your own iCloud if you choose iCloud Drive as the storage location. You can delete them in Settings.</p>
+<h2>Images</h2>
+<p>When a story includes an image from the web, the app downloads it directly from that address without cookies.</p>
+<p data-contact-row hidden>Questions about privacy: <a class="link" data-contact href="#"></a></p></div>
+    <div data-l="zh"><h1 class="hl h-xl" style="margin-top:20px">隐私说明</h1>
+<p class="deck">晨昏报的设计原则是：你的报纸在你的设备上生成。下面说明 App 如何处理你的信息。</p>
+<h2>无需账号，没有广告，不做跟踪</h2>
+<p>不注册晨昏报账号、不订阅即可使用。App 中没有广告，也不包含统计或跟踪代码。我们不出售个人信息。</p>
+<h2>来源由你的设备读取</h2>
+<p>你连接 Gmail 或 GitHub，或在 Mac 上选择 Apple 邮件账户和文件夹后，App 由你的设备直接读取这些内容。访问凭据和你的模型 API 密钥保存在该设备的系统钥匙串中。</p>
+<h2>报纸由你连接的模型服务商撰写</h2>
+<p>生成报纸、翻译报纸或回答你对某篇报道的提问时，App 会用你自己的 API 密钥，把相关材料从你的设备直接发送给你连接的模型服务商，不经过晨昏报的服务器。这部分处理适用服务商自己的条款与隐私政策。</p>
+<h2>报纸保存在哪里</h2>
+<p>报纸、批注和你对报道的反馈保存在本机；如果你把存储位置选为 iCloud Drive，则保存在你自己的 iCloud 中。你可以在设置中删除这些内容。</p>
+<h2>图片</h2>
+<p>报道中包含网络图片时，App 直接从该地址下载，不携带 Cookie。</p>
+<p data-contact-row hidden>隐私相关问题：<a class="link" data-contact href="#"></a></p></div>
+  </main>
+  <footer class="foot">
+    <span>© <span data-year>2026</span> Valorius LLC</span>
+    <nav aria-label="Footer"><a href="/"><span data-l="en">Home</span><span data-l="zh">首页</span></a><a href="/privacy/"><span data-l="en">Privacy</span><span data-l="zh">隐私说明</span></a><a href="/support/"><span data-l="en">Support</span><span data-l="zh">帮助与支持</span></a></nav>
+  </footer>
+</article>
+<script>document.querySelectorAll("[data-year]").forEach(function (n) { n.textContent = new Date().getFullYear(); });</script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://cuckoo.day/sitemap.xml

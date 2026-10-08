@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en" data-lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cuckoo — Your Personal News</title>
+<meta name="title-en" content="Cuckoo — Your Personal News">
+<meta name="title-zh" content="晨昏报 — 你的个人报纸">
+<meta name="description" content="Cuckoo turns your mail, code and bills into a personal newspaper, printed every morning and evening. For Mac, iPhone and iPad.">
+<meta name="theme-color" content="#F7F4EC" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#151B1D" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="canonical" href="https://cuckoo.day/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://cuckoo.day/">
+<meta property="og:title" content="Cuckoo — Your Personal News">
+<meta property="og:description" content="Your mail, code and bills, printed as a newspaper every morning and evening.">
+<meta property="og:image" content="https://cuckoo.day/assets/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/config.js"></script>
+<script src="/assets/site.js"></script>
+</head>
+<body>
+<a class="skip" href="#main"><span data-l="en">Skip to content</span><span data-l="zh">跳到正文</span></a>
+<article class="sheet">
+  <header>
+    <div class="folio">
+      <span class="ed"><i></i><span data-edition>Morning edition</span></span>
+      <nav aria-label="Site">
+        <a class="opt" href="#features"><span data-l="en">Features</span><span data-l="zh">功能</span></a>
+        <a class="opt" href="#privacy"><span data-l="en">Privacy</span><span data-l="zh">隐私</span></a>
+        <a class="opt" href="#questions"><span data-l="en">Questions</span><span data-l="zh">问答</span></a>
+        <button type="button" onclick="cuckooToggleLanguage()" aria-label="Switch language / 切换语言"><span data-l="en">中文</span><span data-l="zh">English</span></button>
+      </nav>
+    </div>
+    <div class="nameplate">
+      <h1><span data-l="en">Cuckoo</span><span data-l="zh">晨昏报</span></h1>
+      <p><span data-l="en">Your Personal News</span><span data-l="zh">Cuckoo · 你的个人报纸</span><br><span class="date" data-today></span></p>
+    </div>
+    <div class="dayrule" aria-hidden="true">
+      <div class="thick"></div><div class="thin"></div><div class="lit"></div>
+      <span class="tick" style="left:25%">06:00</span><span class="tick" style="left:50%">12:00</span><span class="tick" style="left:75%">18:00</span>
+      <div class="sun"></div><span class="now"></span>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="row" aria-labelledby="lead">
+      <div class="cell s5">
+        <div class="kick"><b><span data-l="en">Coming to Mac, iPhone and iPad</span><span data-l="zh">Mac、iPhone 与 iPad 首发</span></b></div>
+        <h2 id="lead" class="hl h-xl"><span data-l="en">Your day, printed twice.</span><span data-l="zh">把一天，印成两份报纸。</span></h2>
+        <p class="deck">
+          <span data-l="en">Cuckoo reads your mail, code and bills, decides what matters, and lays it out as a newspaper — a morning edition at six, an evening edition at six. Different news, a different front page, every time.</span>
+          <span data-l="zh">晨昏报读你的邮件、代码和账单，挑出真正要紧的事，排成一份报纸。早上六点一期晨报，傍晚六点一期晚报。每一期内容不同，头版也不同。</span>
+        </p>
+        <div class="get">
+          <a class="store" data-store="mac" hidden href="#"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2 4.5A1.5 1.5 0 0 1 3.5 3h13A1.5 1.5 0 0 1 18 4.5V13H2zM0 14h20v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2z"/></svg><span><small><span data-l="en">App Store</span><span data-l="zh">App Store</span></small><span data-l="en">Download for Mac</span><span data-l="zh">下载 Mac 版</span></span></a>
+          <a class="store" data-store="ios" hidden href="#"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 1h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2zm2 1.5v1h4v-1z"/></svg><span><small>App Store</small><span data-l="en">iPhone &amp; iPad</span><span data-l="zh">iPhone 与 iPad</span></span></a>
+          <span class="soon" data-soon><span data-l="en">Coming soon to the App Store</span><span data-l="zh">即将在 App Store 上架</span></span>
+        </div>
+        <p class="req" style="margin-top:14px"><span data-l="en">macOS 14 or later · iOS and iPadOS 17 or later · English and 简体中文</span><span data-l="zh">macOS 14 或更新版本 · iOS 与 iPadOS 17 或更新版本 · 简体中文与 English</span></p>
+      </div>
+      <div class="cell s7">
+        <div class="hero">
+          <div class="mac">
+            <div class="bar" aria-hidden="true"><i></i><i></i><i></i></div>
+            <img width="1600" height="1000" data-src-en="/assets/shots/mac-en-01-front.webp" data-src-zh="/assets/shots/mac-zh-Hans-01-front.webp" data-alt-en="Cuckoo on a Mac: a morning edition whose lead story shows a meeting moved from Friday 15:00 to Monday 10:00, with three alerts in the margin." data-alt-zh="Mac 上的晨昏报：头条显示设计评审由周五 15:00 改到周一 10:00，右侧是三条提醒。" alt="">
+          </div>
+          <div class="phone">
+            <img width="660" height="1434" data-src-en="/assets/shots/iphone-en-05-dusk-dark.webp" data-src-zh="/assets/shots/iphone-zh-Hans-05-dusk-dark.webp" data-alt-en="The evening edition on iPhone in dark appearance." data-alt-zh="iPhone 上深色外观的晚报。" alt="">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="fold" aria-hidden="true"></div>
+
+    <section id="features" class="row" aria-label="Features">
+      <article class="cell s4">
+        <div class="kick"><span data-l="en">Sources</span><span data-l="zh">来源</span></div>
+        <h3 class="hl h-m"><span data-l="en">From the places you already look</span><span data-l="zh">来自你本来就要看的地方</span></h3>
+        <p class="body"><span data-l="en">Gmail and GitHub on every device; Apple Mail and folders you choose on the Mac. Cuckoo reads them directly from your device and links every story back to its original.</span><span data-l="zh">各设备都可连接 Gmail 和 GitHub；在 Mac 上还能读取 Apple 邮件和你选定的文件夹。所有内容由你的设备直接读取，每篇报道都能回到原文。</span></p>
+      </article>
+      <article class="cell s4">
+        <div class="kick"><span data-l="en">Edited, not summarised</span><span data-l="zh">编辑，而非摘要</span></div>
+        <h3 class="hl h-m"><span data-l="en">A front page that fits the day</span><span data-l="zh">每天的头版都不一样</span></h3>
+        <p class="body"><span data-l="en">A moved meeting becomes a struck-through time and a new one. A sentence someone wrote becomes a quote. A quiet day is a short list. The editor chooses; the paper keeps one design.</span><span data-l="zh">会议改期，就把旧时间划掉、新时间放大；有人说了一句关键的话，就做成引语；没什么大事，就列几条要点。版式由编辑决定，设计始终如一。</span></p>
+      </article>
+      <article class="cell s4">
+        <div class="kick"><span data-l="en">Act on it</span><span data-l="zh">读完就办</span></div>
+        <h3 class="hl h-m"><span data-l="en">Reply without leaving the story</span><span data-l="zh">在报道里直接回复</span></h3>
+        <p class="body"><span data-l="en">Open a story and ask the assistant to draft a reply, explain a statement or list what you need to do. Drafts open in Mail addressed to the sender — you review and send.</span><span data-l="zh">打开一篇报道，让助手起草回复、解释账单，或列出你要做的事。草稿会在邮件 App 中打开，收件人就是原发件人，由你确认后再发送。</span></p>
+      </article>
+    </section>
+
+    <section class="row" aria-label="Finance and editions">
+      <article class="cell s7">
+        <div class="kick"><span data-l="en">Money</span><span data-l="zh">财务</span></div>
+        <h3 class="hl h-l"><span data-l="en">Bills, pasted where you'll see them</span><span data-l="zh">账单，贴在你看得见的地方</span></h3>
+        <p class="body"><span data-l="en">Receipts, statements and repayments appear as slips pasted onto the page, each showing where it came from and when it is due.</span><span data-l="zh">小票、账单、还款，像真的单据一样贴在报纸上，每张都写明来源和到期日。</span></p>
+        <div class="board" aria-hidden="true">
+          <div class="stk" style="--r:-1.6deg"><i class="tape"></i><div class="receipt">
+            <div class="m">STARBUCKS</div><div class="sub"><span data-l="en">Transaction</span><span data-l="zh">交易</span> · 10/02 08:42</div>
+            <div class="dash"></div><div class="kv"><span data-l="en">Account</span><span data-l="zh">账户</span><b>•• 4021</b></div><div class="dash"></div>
+            <div class="tot"><span data-l="en">AMOUNT</span><span data-l="zh">金额</span><b>−¥32.00</b></div><div class="dash"></div>
+            <div class="src">Example Bank</div></div></div>
+          <div class="stk" style="--r:1.2deg"><i class="tape"></i><div class="receipt">
+            <div class="m"><span data-l="en">SEPTEMBER</span><span data-l="zh">九月账单</span></div><div class="sub"><span data-l="en">Repayment</span><span data-l="zh">还款</span> · 10/02</div>
+            <div class="dash"></div><div class="kv"><span data-l="en">Card</span><span data-l="zh">信用卡</span><b>•• 4021</b></div><div class="dash"></div>
+            <div class="tot" style="padding-top:38px"><span data-l="en">PAID</span><span data-l="zh">已还</span><b>¥940.00</b></div><div class="dash"></div>
+            <div class="src">2026-10 statement.pdf</div></div>
+            <div class="stamp"><span data-l="en">PAID</span><span data-l="zh">已还款</span></div></div>
+        </div>
+      </article>
+      <article class="cell s5">
+        <div class="kick"><span data-l="en">Twice a day</span><span data-l="zh">每天两期</span></div>
+        <h3 class="hl h-l"><span data-l="en">Morning and evening</span><span data-l="zh">晨报与晚报</span></h3>
+        <div class="label" style="margin-top:18px"><span data-l="en">Editions</span><span data-l="zh">出报时间</span></div>
+        <div class="change pair"><span class="to">06:00</span><span class="arrow" aria-hidden="true"></span><span class="to">18:00</span></div>
+        <p class="body"><span data-l="en">Each edition covers what happened since the last one. The masthead rule is the day itself; the sun marks when your paper was written. Read it in light or dark.</span><span data-l="zh">每一期只写上一期之后发生的事。报头那道双线就是今天，太阳标出这份报纸写好的时刻。深色、浅色都好读。</span></p>
+      </article>
+    </section>
+
+    <section class="row" aria-label="Screens">
+      <div class="cell s12">
+        <div class="slug"><span><span data-l="en">On iPhone</span><span data-l="zh">在 iPhone 上</span></span></div>
+        <div class="screens">
+          <figure><img width="660" height="1434" loading="lazy" decoding="async" data-src-en="/assets/shots/iphone-en-01-front.webp" data-src-zh="/assets/shots/iphone-zh-Hans-01-front.webp" data-alt-en="Front page with a changed meeting time and alerts." data-alt-zh="头版：会议改期与提醒。" alt=""></figure>
+          <figure><img width="660" height="1434" loading="lazy" decoding="async" data-src-en="/assets/shots/iphone-en-02-finance.webp" data-src-zh="/assets/shots/iphone-zh-Hans-02-finance.webp" data-alt-en="A card statement pasted onto the page beside its story." data-alt-zh="信用卡账单像单据一样贴在报道旁。" alt=""></figure>
+          <figure><img width="660" height="1434" loading="lazy" decoding="async" data-src-en="/assets/shots/iphone-en-03-story.webp" data-src-zh="/assets/shots/iphone-zh-Hans-03-story.webp" data-alt-en="A story with feedback buttons and a reply drafted by the assistant." data-alt-zh="报道详情：反馈按钮与助手起草的回复。" alt=""></figure>
+          <figure><img width="660" height="1434" loading="lazy" decoding="async" data-src-en="/assets/shots/iphone-en-05-dusk-dark.webp" data-src-zh="/assets/shots/iphone-zh-Hans-05-dusk-dark.webp" data-alt-en="The evening edition in dark appearance." data-alt-zh="深色外观的晚报。" alt=""></figure>
+        </div>
+      </div>
+    </section>
+
+    <section id="privacy" class="row" aria-labelledby="privacy-title">
+      <article class="cell s7">
+        <div class="kick"><span data-l="en">Privacy</span><span data-l="zh">隐私</span></div>
+        <div class="quote"><q id="privacy-title"><span data-l="en">Your paper is written on your device, from your sources, with your model key. Nothing passes through us.</span><span data-l="zh">你的报纸在你的设备上、用你的来源、凭你的模型密钥写成。中间不经过我们。</span></q></div>
+        <p class="body"><span data-l="en">No account, no ads, no tracking. Editions stay on this device or in your own iCloud. To write each edition, the material it covers goes directly from your device to the model provider you connect.</span><span data-l="zh">无需账号，没有广告，不做跟踪。报纸保存在本机或你自己的 iCloud 中。写每一期时，相关材料从你的设备直接发送给你连接的模型服务商。</span> <a class="link" href="/privacy/"><span data-l="en">Read the privacy summary</span><span data-l="zh">阅读隐私说明</span></a></p>
+      </article>
+      <article class="cell s5">
+        <div class="slug"><span><span data-l="en">Platforms</span><span data-l="zh">平台</span></span></div>
+        <table class="ledger">
+          <tr><td><div class="p">Mac</div><div class="v">macOS 14+</div></td><td class="st on"><span data-l="en">Coming soon</span><span data-l="zh">即将推出</span></td></tr>
+          <tr><td><div class="p">iPhone &amp; iPad</div><div class="v">iOS / iPadOS 17+</div></td><td class="st on"><span data-l="en">Coming soon</span><span data-l="zh">即将推出</span></td></tr>
+          <tr><td><div class="p">Android</div><div class="v"><span data-l="en">In preparation</span><span data-l="zh">筹备中</span></div></td><td class="st later"><span data-l="en">Later</span><span data-l="zh">稍后</span></td></tr>
+          <tr><td><div class="p">Windows</div><div class="v"><span data-l="en">In preparation</span><span data-l="zh">筹备中</span></div></td><td class="st later"><span data-l="en">Later</span><span data-l="zh">稍后</span></td></tr>
+        </table>
+      </article>
+    </section>
+
+    <section id="questions" class="row" aria-labelledby="questions-title">
+      <div class="cell s12">
+        <div class="slug"><span id="questions-title"><span data-l="en">Questions</span><span data-l="zh">问答</span></span></div>
+        <div class="briefs">
+          <div class="brief"><span class="no">1</span><div><h3><span data-l="en">What do I need to start?</span><span data-l="zh">开始用需要什么？</span></h3><p><span data-l="en">An API key from a supported model provider. Cuckoo uses your key to write each edition; sources are optional and you can connect them any time.</span><span data-l="zh">一个支持的模型供应商的 API 密钥。晨昏报用你的密钥来写每一期报纸；来源可以随时再连接，不是必需的。</span></p></div></div>
+          <div class="brief"><span class="no">2</span><div><h3><span data-l="en">Do I need an account?</span><span data-l="zh">需要注册账号吗？</span></h3><p><span data-l="en">No. Cuckoo opens and works without a Cuckoo account or subscription.</span><span data-l="zh">不需要。不注册晨昏报账号、不订阅，也能直接打开使用。</span></p></div></div>
+          <div class="brief"><span class="no">3</span><div><h3><span data-l="en">Will it send mail for me?</span><span data-l="zh">它会替我发邮件吗？</span></h3><p><span data-l="en">No. The assistant drafts; you open the draft in Mail, review it and send it yourself.</span><span data-l="zh">不会。助手只起草，你在邮件 App 里检查后自己发送。</span></p></div></div>
+          <div class="brief"><span class="no">4</span><div><h3><span data-l="en">Can my Mac and iPhone share editions?</span><span data-l="zh">Mac 和 iPhone 能共享报纸吗？</span></h3><p><span data-l="en">Shared editions through iCloud Drive are planned for the signed release. Your keys and connections stay on each device.</span><span data-l="zh">正式签名发行版计划通过 iCloud Drive 共享报纸。密钥和连接仍分别保存在各自设备上。</span></p></div></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <span>© <span data-year>2026</span> Valorius LLC · <span data-l="en">Cuckoo</span><span data-l="zh">晨昏报</span></span>
+    <nav aria-label="Footer">
+      <a href="/privacy/"><span data-l="en">Privacy</span><span data-l="zh">隐私说明</span></a>
+      <a href="/support/"><span data-l="en">Support</span><span data-l="zh">帮助与支持</span></a>
+      <a href="#" onclick="cuckooToggleLanguage(); return false;"><span data-l="en">中文</span><span data-l="zh">English</span></a>
+    </nav>
+  </footer>
+</article>
+<script>document.querySelectorAll("[data-year]").forEach(function (n) { n.textContent = new Date().getFullYear(); });</script>
+</body>
+</html>
