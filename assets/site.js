@@ -62,7 +62,10 @@
       var url = (config.appStore || {})[node.getAttribute("data-store")];
       if (url) { node.href = url; node.hidden = false; }
     });
-    var any = Object.keys(config.appStore || {}).some(function (k) { return config.appStore[k]; });
+    document.querySelectorAll('[data-download="mac"]').forEach(function (node) {
+      if (config.macDownload) { node.href = config.macDownload; node.hidden = false; }
+    });
+    var any = Boolean(config.macDownload) || Object.keys(config.appStore || {}).some(function (k) { return config.appStore[k]; });
     document.querySelectorAll("[data-soon]").forEach(function (node) { node.hidden = any; });
     document.querySelectorAll("[data-contact]").forEach(function (node) {
       if (config.contactEmail) { node.href = "mailto:" + config.contactEmail; node.textContent = config.contactEmail; node.closest("[data-contact-row]").hidden = false; }
