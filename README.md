@@ -4,18 +4,19 @@ Static product site for Cuckoo / 晨昏报, served by GitHub Pages from this rep
 
 ## Pages
 
-- `/` product page (English and Simplified Chinese; follows the browser language, with a toggle)
+- `/` product page in English and `/zh/` in Simplified Chinese (a Chinese browser is sent to `/zh/` unless the visitor chose English); eleven full-screen newspaper spreads styled by `assets/home.css` and `assets/home.js`
 - `/privacy/` privacy summary — also the App Store privacy policy URL
 - `/support/` getting started and support — also the App Store support URL
 - `/404.html`
 
-The page follows light/dark appearance and switches to the evening palette between 18:00 and 06:00 local time; the masthead day rule shows the visitor's current time.
+Each spread is a fixed artboard scaled to cover the window, so nothing collides at any size. The pages follow light/dark appearance and honour Reduce Motion. A holiday within seven days of the visitor's date adds a small illustration beside the masthead.
 
 ## Before launch
 
 Edit `assets/config.js`:
 
-- `appStore.mac` and `appStore.ios` — App Store product URLs. Until set, the page shows "Coming soon to the App Store" and no download buttons.
+- `macDownload` — the published Mac archive (the GitHub Release asset). When set, the home page CTA becomes "Download for Mac".
+- `appStore.mac` and `appStore.ios` — App Store product URLs, for the subpages.
 - `contactEmail` — shown on the privacy and support pages when set.
 
 The app repository maintains the full release privacy draft; `/privacy/` describes the current local-first product and selected-provider processing. Public support: support@cuckoo.day.
@@ -26,4 +27,4 @@ The app repository maintains the full release privacy draft; `/privacy/` describ
 
 ## Images
 
-Screenshots in `assets/shots/` come from the synthetic captures in the private app repository. `assets/og-image.png` is produced by the app repository’s `scripts/compose-social-images.py --website <website-checkout>`. Regenerate them together when the app's appearance changes.
+`assets/img/app/` holds crops of the app's own offscreen renders (`scripts/check-report-visuals.sh` in the app repository) with synthetic data, in `zh`/`en` and light/dark. `assets/img/bookstall.webp` and `aircraft-wing.webp` are Unsplash License photographs; credits are in `assets/img/CREDITS.md` and on the About spread. `assets/og-image.png` is produced by the app repository's `scripts/compose-social-images.py --website <website-checkout>`.

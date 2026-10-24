@@ -5,6 +5,6 @@ window.CUCKOO_SITE = {
     mac: "",   // e.g. "https://apps.apple.com/app/id0000000000"
     ios: ""    // the same product page when the app is a universal purchase
   },
-  macDownload: "", // set only after the signed, notarized archive is published
+  macDownload: "https://github.com/Unka-Malloc/cuckoo.day/releases/download/v1.0.0/Cuckoo-1.0.0.zip", // set only after the signed, notarized archive is published
   contactEmail: "support@cuckoo.day"
 };
