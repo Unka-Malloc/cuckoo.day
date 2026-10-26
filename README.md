@@ -15,7 +15,7 @@ Each spread is a fixed artboard scaled to cover the window, so nothing collides 
 
 Edit `assets/config.js`:
 
-- `macDownload` — the published Mac archive (the GitHub Release asset). When set, the home page CTA becomes "Download for Mac".
+- `macDownload` — the published Mac installer (the GitHub Release `.dmg` asset). When set, the home page CTA becomes "Download for Mac".
 - `appStore.mac` and `appStore.ios` — App Store product URLs, for the subpages.
 - `contactEmail` — shown on the privacy and support pages when set.
 
@@ -23,13 +23,12 @@ The app repository maintains the full release privacy draft; `/privacy/` describ
 
 ## Releases
 
-Each published Mac release is a GitHub Release `v<version>` in this repository carrying the notarized `Cuckoo-<version>.zip` and the Sparkle `appcast.xml`; installed apps read the latest release's `appcast.xml`. The download link changes only after its archive is downloadable:
+Each published Mac release is a GitHub Release `v<version>` in this repository carrying the signed, notarized `Cuckoo-<version>.dmg` installer and the Sparkle `appcast.xml`; installed apps read the latest release's `appcast.xml`. This repository never carries application source. The download link changes only after its installer is downloadable:
 
-1. Tag `v<version>` in the app repository.
-2. Tag the current published `main` here as `v<version>` and push the tag.
-3. Create the GitHub Release for that tag as a draft, upload the archive and `appcast.xml`, publish it as the latest release, and confirm both asset URLs download.
-4. In one commit, add `release/v<version>.md` (artifact SHA-256s and verifiable signing properties) and point `macDownload` at the new archive, then push it.
-5. If a release is not created or is withdrawn, point `macDownload` back at the last published archive (or empty it to hide the download) in the same commit that adds the manifest's dated status.
+1. Tag the current published `main` here as `v<version>` and push the tag.
+2. Create the GitHub Release for that tag as a draft, upload the `.dmg` and `appcast.xml`, publish it as the latest release, and confirm both asset URLs download.
+3. In one commit, add `release/v<version>.md` (artifact SHA-256s and verifiable signing properties) and point `macDownload` at the new `.dmg`, then push it.
+4. If a release is not created or is withdrawn, point `macDownload` back at the last published installer in the same commit that adds the manifest's dated status; with no published installer, empty it, which shows the App Store placeholder instead of a download.
 
 Manifests are never deleted: a manifest whose release did not happen, was superseded or was withdrawn keeps its hashes and gains a dated status line at the top.
 
