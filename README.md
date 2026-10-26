@@ -9,7 +9,7 @@ Static product site for Cuckoo / 晨昏报, served by GitHub Pages from this rep
 - `/support/` getting started and support — also the App Store support URL
 - `/404.html`
 
-Each spread is a fixed artboard scaled to cover the window, so nothing collides at any size. The pages follow light/dark appearance and honour Reduce Motion. A holiday within seven days of the visitor's date adds a small illustration beside the masthead.
+Each spread is a fixed artboard scaled to cover the window, so nothing collides at any size. The pages follow light/dark appearance and honour Reduce Motion. On a festival day the masthead carries that festival's illustration — Chinese festivals on `/zh/`, Western holidays on `/` — and the seasons spread follows the real calendar (dates in `assets/home.js`, from the Hong Kong Observatory tables, through 2030).
 
 ## Before launch
 
@@ -38,4 +38,4 @@ Manifests are never deleted: a manifest whose release did not happen, was supers
 
 ## Images
 
-`assets/img/app/` holds crops of the app's own offscreen renders (`scripts/check-report-visuals.sh` in the app repository) with synthetic data, in `zh`/`en` and light/dark. `assets/img/bookstall.webp` and `aircraft-wing.webp` are Unsplash License photographs; credits are in `assets/img/CREDITS.md` and on the About spread. `assets/og-image.png` is produced by the app repository's `scripts/compose-social-images.py --website <website-checkout>`.
+`assets/img/app/` holds crops of the app's own offscreen renders (`scripts/check-report-visuals.sh --site-hero` in the app repository) with synthetic data, in `zh`/`en` and light/dark. `assets/img/bookstall.webp` and `aircraft-wing.webp` are Unsplash License photographs; credits are in `assets/img/CREDITS.md` and on the About spread. `assets/og-image.png` is produced by the app repository's `scripts/compose-social-images.py --website <website-checkout>`. `favicon.png`, `apple-touch-icon.png` and `assets/brand/icon-512.png` are resized exports of the approved app icon (`scripts/build-app-icon.py` in the app repository; press render at `dist/marketing/press/icon-1024.png`).
