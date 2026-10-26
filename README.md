@@ -21,6 +21,18 @@ Edit `assets/config.js`:
 
 The app repository maintains the full release privacy draft; `/privacy/` describes the current local-first product and selected-provider processing. Public support: support@cuckoo.day.
 
+## Releases
+
+Each published Mac release is a GitHub Release `v<version>` in this repository carrying the notarized `Cuckoo-<version>.zip` and the Sparkle `appcast.xml`; installed apps read the latest release's `appcast.xml`. The download link changes only after its archive is downloadable:
+
+1. Tag `v<version>` in the app repository.
+2. Tag the current published `main` here as `v<version>` and push the tag.
+3. Create the GitHub Release for that tag as a draft, upload the archive and `appcast.xml`, publish it as the latest release, and confirm both asset URLs download.
+4. In one commit, add `release/v<version>.md` (artifact SHA-256s and verifiable signing properties) and point `macDownload` at the new archive, then push it.
+5. If a release is not created or is withdrawn, point `macDownload` back at the last published archive (or empty it to hide the download) in the same commit that adds the manifest's dated status.
+
+Manifests are never deleted: a manifest whose release did not happen, was superseded or was withdrawn keeps its hashes and gains a dated status line at the top.
+
 ## DNS
 
 `CNAME` contains `cuckoo.day`. In the domain's DNS, point the apex at GitHub Pages (A records 185.199.108.153, 185.199.109.153, 185.199.110.153, 185.199.111.153, and AAAA 2606:50c0:8000::153, 2606:50c0:8001::153, 2606:50c0:8002::153, 2606:50c0:8003::153), optionally `www` as a CNAME to `unka-malloc.github.io`, then enable "Enforce HTTPS" in the repository's Pages settings with source "GitHub Actions".
