@@ -6,7 +6,6 @@
 /* English pages set the same newspaper in Latin type */
 html[lang="en"] { --zh: "Iowan Old Style", "Baskerville", "Palatino", Georgia, serif; --body: "Iowan Old Style", "Baskerville", Georgia, serif; }
 html[lang="en"] .ink { font-family: var(--zh); font-weight: 900; color: var(--ink); letter-spacing: .01em; font-feature-settings: "palt"; word-break: keep-all; text-wrap: balance; }
-html[lang="en"] 
 html[lang="en"] .fn-title { font-size: 50px; }
 html[lang="en"] .gh-title { font-size: 30px; }
 html[lang="en"].portrait .fn-title { font-size: 26px; }

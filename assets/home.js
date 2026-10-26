@@ -125,7 +125,6 @@
     function setWx(key) {
       if (!wx) return;
       wx.dataset.wx = key;
-      $("[data-wx-label]", wx).textContent = WX[key][0];
       var temp = $("[data-wx-temp]", wx), note = $("[data-wx-note]", wx);
       temp.innerHTML = WX[key][1]; note.innerHTML = WX[key][2];
       [temp, note].forEach(function (n) { n.classList.remove("wx-swap"); void n.offsetWidth; n.classList.add("wx-swap"); });
