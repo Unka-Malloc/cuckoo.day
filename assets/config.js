@@ -5,6 +5,6 @@ window.CUCKOO_SITE = {
     mac: "",   // e.g. "https://apps.apple.com/app/id0000000000"
     ios: ""    // the same product page when the app is a universal purchase
   },
-  macDownload: "https://github.com/Unka-Malloc/cuckoo.day/releases/download/v1.0.1/Cuckoo-1.0.1.dmg", // the newest published release; see README "Releases"
+  macDownload: "https://github.com/Unka-Malloc/cuckoo.day/releases/download/v1.0.2/Cuckoo-1.0.2.dmg", // the newest published release; see README "Releases"
   contactEmail: "support@cuckoo.day"
 };
