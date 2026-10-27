@@ -313,6 +313,7 @@
         f.el.style.left = q[0] + "px"; f.el.style.top = q[1] + "px";
         placed.push(box);
       });
+      $$("[data-fest-set]", wg).forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.festSet === festSel)); });
     }
     function spanOf(k) {
       var wd = F[k] && wheelDate(k);
