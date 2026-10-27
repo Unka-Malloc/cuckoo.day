@@ -9,7 +9,7 @@ Static product site for Cuckoo / 晨昏报, served by GitHub Pages from this rep
 - `/support/` getting started and support — also the App Store support URL
 - `/404.html`
 
-Each spread is a fixed artboard scaled to cover the window, so nothing collides at any size. The pages follow light/dark appearance and honour Reduce Motion. On a festival day the masthead carries that festival's illustration — Chinese festivals on `/zh/`, Western holidays on `/` — and the seasons spread follows the real calendar (dates in `assets/calendar.js`, from the Hong Kong Observatory tables, through 2030).
+Each spread is a fixed artboard scaled to cover the window, so nothing collides at any size. The pages follow light/dark appearance and honour Reduce Motion. On a festival day the masthead carries that festival's illustration — Chinese festivals on `/zh/`, Western holidays on `/` — and the seasons spread draws the coming year as a wheel (Chinese festival dates and solar terms for 2026–2100 in `assets/calendar.js`, from the Hong Kong Observatory’s Gregorian–Lunar tables; Western holidays by their calendar rules).
 
 ## Before launch
 

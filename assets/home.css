@@ -139,14 +139,7 @@ figcaption { margin-top: 10px; font: 500 12px var(--zh); color: var(--ink3); let
 .pull p { font: 700 22px/1.6 var(--zh); text-wrap: balance; }
 .pull cite { display: block; margin-top: 8px; font: 500 13px var(--zh); font-style: normal; color: var(--ink3); letter-spacing: .06em; }
 
-.season-title { font-size: 42px; line-height: 1.3; margin: 18px 0 34px; }
 .egg-art { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transform: scale(.92); transition: opacity .7s ease, transform .9s cubic-bezier(.3,1.2,.4,1); }
-.fest[data-show="chongyang"] .fest[data-show="halloween"] .fest:hover @keyframes bloom { to { transform: rotate(18deg) scale(1.05); } }
-.fest:hover .fest:hover .fest:hover .fest:hover @keyframes twinkle { to { opacity: .4; } }
-.fest-copy p { font: 400 19px/1.7 var(--zh); color: var(--ink2); }
-.fest-pick button:hover { opacity: 1; color: var(--ink); }
-.days ol { list-style: none; margin-top: 10px; border-top: 3px double var(--ink); }
-.days span { font: 500 12px var(--zh); color: var(--ink3); letter-spacing: .1em; }
 @keyframes eggin { from { opacity: 0; transform: scale(.4) rotate(-30deg); } }
 
 .travel-body { display: grid; grid-template-columns: 460px 1fr; gap: 64px; }
@@ -399,13 +392,26 @@ table { width: 100%; border-collapse: collapse; }
 .portrait .pull::before { font-size: 60px; top: -14px; }
 .portrait .pull p { font-size: 16px; }
 
-.portrait .season-title { font-size: 25px; margin: 10px 0 18px; }
-.portrait .fest-name { font-size: 46px; margin: 6px 0; } .portrait .fest-copy p { font-size: 14px; }
-.portrait .fest-pick { gap: 2px; padding-top: 10px; } .portrait .fest-pick button { height: 28px; padding: 0 10px; font-size: 12px; }
-.portrait .season-side { margin-top: 22px; }
-.portrait .days li { padding: 8px 0; gap: 14px; } .portrait .days time { width: 70px; font-size: 12.5px; } .portrait .days b { font-size: 15px; }
+.portrait .season-body { display: flex; flex-direction: column; }
+.portrait .fest { width: 100%; align-self: stretch; text-align: left; }
+.portrait .fest-count { justify-content: flex-start; }
+.portrait .wheel { order: -1; flex: none; width: 346px; height: 346px; margin: 0 auto 10px; }
+.portrait .wh-tl { font-size: 11px; }
+.portrait .wh-fl { font-size: 12px; }
+.portrait .wh-dot { width: 10px; height: 10px; transform: translate(-50%, -50%) scale(.6); }
+.portrait .wh-art { width: 110px; height: 110px; }
+.portrait .fest-count { margin: 10px 0 6px; gap: 8px; }
+.portrait .fest-count .num { font-size: 56px; }
+.portrait .fest-count.today .num { font-size: 44px; }
+.portrait .fest-count .unit { font-size: 15px; }
+.portrait .fest-when { font-size: 14px; }
+.portrait .fest-line { font-size: 14px; max-width: none; margin-top: 6px; }
+.portrait .days { margin-top: 16px; padding-top: 10px; max-width: none; }
+.portrait .days li { padding: 7px 0; font-size: 15px; gap: 14px; }
+.portrait .days time { width: 56px; font-size: 13px; }
 
-.portrait .tr-title { font-size: 36px; margin: 10px 0 8px; }
+.portrait .tr-title { font-size: 36px; margin: 10px 0 8px; --ink-pad: 8 8 3 8; }
+.portrait .tr-photo { --ink-pad: 3 8 8 8; }
 .portrait .tr-col .deck { font-size: 13.5px; }
 .portrait .travel-body { position: relative; }
 .portrait .tr-photo img { height: 150px; }
@@ -550,7 +556,7 @@ html[lang="en"] .nameplate { font: 700 120px/1 var(--latin); letter-spacing: .02
 .alt-row svg { width: 15px; height: 15px; flex: none; }
 .alt-row i { margin-left: auto; font: 400 13px var(--zh); font-style: normal; color: var(--ink3); }
 .alt-row[href] i { color: var(--ink); }
-.product { position: relative; align-self: center; justify-self: center; width: 100%; max-width: 760px; height: 552px; --ink-pad: 70; }
+.product { position: relative; align-self: center; justify-self: center; width: 100%; max-width: 760px; height: 552px; --ink-pad: 12 44 72 44; }
 .product .mac { position: absolute; left: 0; top: 0; right: 110px; border-radius: 11px; box-shadow: 0 0 0 .5px rgba(0,0,0,.18), 0 30px 60px -18px rgba(0,0,0,.38); background: var(--paper); overflow: hidden; }
 .product .mac-bar { height: 34px; display: flex; align-items: center; gap: 8px; padding: 0 12px; background: #f6f5ee; border-bottom: 1px solid rgba(0,0,0,.08); }
 .product .mac-bar i { width: 11px; height: 11px; border-radius: 50%; }
@@ -570,27 +576,48 @@ html[lang="en"] .nameplate { font: 700 120px/1 var(--latin); letter-spacing: .02
   .iphone { box-shadow: 0 0 0 .5px rgba(255,255,255,.14), 0 24px 50px -14px rgba(0,0,0,.75); }
 }
 
-.season-body { display: grid; gap: 72px; grid-template-columns: 1fr !important; }
-.fest { grid-template-rows: auto auto; display: grid; grid-template-columns: 1fr 300px; gap: 0 56px; align-items: center; margin-top: 32px; }
-.fest-when { font: 500 15px var(--zh); color: var(--ink3); }
-.fest-name { display: block; letter-spacing: .04em; white-space: nowrap; font: 900 56px/1.18 var(--zh); margin: 10px 0 12px; }
-.fest-line { font: 400 20px/1.7 var(--zh); color: var(--ink2); max-width: 500px; }
-.fest-art { width: 300px; position: relative; height: 300px; }
-.fest-art .egg-art { position: absolute; inset: 0; opacity: 0; transition: opacity .5s; }
-.fest-art .egg-art *, .egg .egg-art * { fill: none !important; stroke: var(--ink) !important; stroke-width: 3 !important; stroke-linecap: round !important; stroke-linejoin: round !important; }
-.fest-art .egg-art .acc, .egg .egg-art .acc { stroke: var(--zhu) !important; }
-.fest[data-show="spring"] .egg-spring, .fest[data-show="lantern"] .egg-lantern, .fest[data-show="qingming"] .egg-qingming, .fest[data-show="dragonboat"] .egg-dragonboat, .fest[data-show="qixi"] .egg-qixi, .fest[data-show="midautumn"] .egg-midautumn, .fest[data-show="chongyang"] .egg-chongyang, .fest[data-show="dongzhi"] .egg-dongzhi, .fest[data-show="newyear"] .egg-newyear, .fest[data-show="valentine"] .egg-valentine, .fest[data-show="easter"] .egg-easter, .fest[data-show="halloween"] .egg-halloween, .fest[data-show="thanksgiving"] .egg-thanksgiving, .fest[data-show="xmas"] .egg-xmas { opacity: 1; }
+/* the seasons spread: countdown column left, the coming year as a wheel right */
+.season-body { display: grid; grid-template-columns: minmax(0, 1fr) 640px; gap: 0 64px; align-items: center; }
+.fest-name { display: block; letter-spacing: .04em; font: 900 72px/1.15 var(--zh); }
+.fest-count { display: flex; align-items: baseline; gap: 12px; margin: 20px 0 10px; }
+.fest-count .num { font: 400 132px/1 var(--latin); font-variant-numeric: lining-nums; letter-spacing: -.04em; color: var(--ink); }
+.fest-count.today .num { font-family: var(--zh); font-weight: 400; font-size: 96px; }
+html[lang="en"] .fest-count.today .num { font-family: var(--latin); }
+.fest-count .unit { font: 500 26px var(--zh); color: var(--ink2); }
+.fest-when { font: 500 17px var(--zh); color: var(--ink3); }
+.fest-line { font: 400 20px/1.7 var(--zh); color: var(--ink2); max-width: 420px; margin-top: 8px; }
+.days { list-style: none; margin: 26px 0 0; padding: 16px 0 0; border-top: 1px solid var(--rule); max-width: 480px; }
+.days li { display: flex; align-items: baseline; gap: 20px; padding: 11px 0; border-bottom: 1px solid var(--hair); font: 400 18px var(--zh); }
+.days time { width: 64px; flex: none; font: 500 15px var(--zh); color: var(--ink3); font-variant-numeric: tabular-nums; }
+.days b { flex: 1; font-weight: 700; }
+.days li span { margin-left: auto; font: 500 13px var(--zh); color: var(--ink3); }
+.wheel { position: relative; width: 640px; height: 640px; justify-self: center; }
+.wh-g, .wh-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.wh-svg { display: block; pointer-events: none; }
+.wh-rim { fill: none; stroke: var(--ink); stroke-width: 3; }
+.wh-rim2 { fill: none; stroke: var(--ink); stroke-width: 1; }
+.wh-tick { stroke: var(--rule); stroke-width: 1; }
+.wh-today { fill: var(--paper); stroke: var(--zhu); stroke-width: 2; }
+.wh-arc { stroke: var(--zhu); stroke-width: 3; stroke-linecap: round; fill: none; transition: stroke-dashoffset .9s cubic-bezier(.16, 1, .3, 1); }
+.wh-tl { position: absolute; transform: translate(-50%, -50%); font: 500 14px var(--zh); color: var(--ink3); white-space: nowrap; }
+.wh-tl.hot { color: var(--ink); }
+.wh-tf { color: var(--zhu); }
+.wh-tf:hover { color: var(--ink); }
+.wh-tf[aria-pressed="true"] { font-weight: 700; }
+.wh-fl { position: absolute; transform: translate(-50%, -50%); font: 600 15px var(--zh); color: var(--zhu); white-space: nowrap; }
+.wh-fl:hover { color: var(--ink); }
+.wh-fl[aria-pressed="true"] { font-weight: 700; }
+.wh-dot { position: absolute; width: 14px; height: 14px; padding: 0; border-radius: 50%; background: var(--zhu); transform: translate(-50%, -50%) scale(.64); transition: transform .45s cubic-bezier(.3, 1.4, .5, 1); }
+.wh-dot::before { content: ""; position: absolute; inset: -7px; }
+.wh-dot[aria-pressed="true"] { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 2px var(--paper); }
+.wh-art { position: absolute; left: 50%; top: 50%; width: 220px; height: 220px; transform: translate(-50%, -50%); }
+.wh-art .egg-art { position: absolute; inset: 0; opacity: 0; transition: opacity .5s; }
+.wheel[data-show="spring"] .egg-spring, .wheel[data-show="lantern"] .egg-lantern, .wheel[data-show="qingming"] .egg-qingming, .wheel[data-show="dragonboat"] .egg-dragonboat, .wheel[data-show="qixi"] .egg-qixi, .wheel[data-show="midautumn"] .egg-midautumn, .wheel[data-show="chongyang"] .egg-chongyang, .wheel[data-show="dongzhi"] .egg-dongzhi, .wheel[data-show="newyear"] .egg-newyear, .wheel[data-show="valentine"] .egg-valentine, .wheel[data-show="easter"] .egg-easter, .wheel[data-show="halloween"] .egg-halloween, .wheel[data-show="thanksgiving"] .egg-thanksgiving, .wheel[data-show="xmas"] .egg-xmas { opacity: 1; }
+.wh-art .egg-art *, .egg .egg-art * { fill: none !important; stroke: var(--ink) !important; stroke-width: 3.4 !important; stroke-linecap: round !important; stroke-linejoin: round !important; }
+.wh-art .egg-art .det, .egg .egg-art .det { stroke-width: 2 !important; }
+.wh-art .egg-art .acc, .egg .egg-art .acc { stroke: var(--zhu) !important; stroke-width: 2.6 !important; }
 @keyframes eggbob { from { transform: translateY(0); } to { transform: translateY(-4px); } }
-.fest-art:hover .egg-art, .egg.on:hover .egg-art { animation: eggbob .8s ease-in-out infinite alternate; }
-.egg-lantern, .egg-qingming, .egg-dragonboat, .egg-qixi, .egg-dongzhi, .egg-newyear, .egg-valentine, .egg-easter, .egg-thanksgiving { fill: none; stroke: var(--ink); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
-.fest-pick { padding-top: 16px; border-top: 1px solid var(--hair); grid-column: 1 / -1; margin-top: 24px; display: flex; gap: 22px; flex-wrap: wrap; }
-.fest-pick button { background: none; border: 0; border-bottom: 2px solid transparent; padding: 0 0 2px; font: 500 15px var(--zh); color: var(--ink3); cursor: pointer; }
-.fest-pick button[aria-pressed="true"] { color: var(--ink); font-weight: 700; border-bottom-color: var(--ink); }
-.days { list-style: none; margin: 28px 0 0; padding: 0; border-top: 1px solid var(--rule); }
-.days li { display: flex; gap: 18px; align-items: baseline; padding: 10px 0; border-bottom: 1px solid var(--hair); font-size: 15px; }
-.days time { width: 88px; font: 500 15px var(--zh); color: var(--ink3); font-variant-numeric: tabular-nums; min-width: 88px; }
-.days b { flex: 1; font: 700 19px var(--zh); font-weight: 700; }
-.days li span { margin-left: auto; color: var(--ink3); }
+.wh-art:hover .egg-art, .egg.on:hover .egg-art { animation: eggbob .8s ease-in-out infinite alternate; }
 
 html[lang^="zh"] .ink .cl { white-space: nowrap; }
 
@@ -614,9 +641,6 @@ html[lang="en"].portrait .colophon { font-size: 44px; letter-spacing: .04em; dis
 .portrait .product .mac { display: block; position: absolute; left: 0; top: 0; right: 26px; bottom: auto; }
 .portrait .iphone { width: 108px; border-radius: 26px; padding: 8px; }
 .portrait .iscreen { border-radius: 19px; }
-.portrait .fest { grid-template-columns: 1fr; gap: 18px; }
-.portrait .fest-art { width: 120px; height: 220px; }
-.portrait .days { margin-top: 24px; }
 .portrait .deck { font-size: 14px; line-height: 1.6; }
 .label, .src { margin: 0; }
 .body > .ink { font-size: 44px; line-height: 1.18; margin: 0; }
@@ -651,7 +675,7 @@ html[lang="en"] .colophon { font: 700 96px/1.1 var(--latin); letter-spacing: .14
 .portrait .fn-body > *:first-child { order: -1; }
 .portrait .tr-photo { height: 300px; position: relative; }
 .portrait .tr-right { left: 0; right: 0; top: 214px; position: static; margin-top: -4px; }
-html[lang="en"] .fest-name { line-height: 1.18; font-size: 44px; }
+html[lang="en"] .fest-name { line-height: 1.18; font-size: 60px; }
 html[lang="en"] .ag-body .ink { font-size: 38px; }
 .portrait .body > .ink { font-size: 22px; }
 html[lang="en"].portrait .ink { font-size: 20px; }
@@ -668,7 +692,7 @@ html[lang="en"] .tr-body > .ink, html[lang="en"] .gh-body > .ink, html[lang="en"
 .mast { display: flex; justify-content: center; align-items: flex-start; position: relative; height: 196px; margin-top: 56px; padding-top: 8px; box-sizing: border-box; }
 .portrait .life-title { font-size: 22px; margin: 10px 0 0; order: 1; } .portrait .life-body .deck { order: 2; } .portrait .life-photo { order: 3; } .portrait .wx { order: 4; margin-top: 16px; } .portrait .sched { order: 5; } .portrait .pull { order: 1; } .portrait .life-body .deck { order: 2; } .portrait .life-photo { order: 3; font-size: 22px; }
 .portrait .mast { height: auto; margin-top: 36px; padding-top: 0; }
-.portrait .nameplate { font-size: 72px; }
+.portrait .nameplate { font-size: 72px; --ink-pad: 2 8 8 8; }
 .portrait .leafs { width: 150px; height: 208px; margin-top: 20px; }
 .portrait .tr-right .pass { left: auto; right: auto; bottom: auto; z-index: 2; margin-top: 4px; position: static; margin: 10px 8px 0; }
 

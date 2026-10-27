@@ -135,7 +135,9 @@
       $$("[data-wx-set]", wx).forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.wxSet === wx.dataset.wx)); });
     }
 
-    /* ---------- festivals: the next one decides the cover's easter egg ---------- */
+    /* ---------- festivals: the coming year laid out as a wheel ----------
+       CAL packs festival dates as MMDD strings, one per year from CAL.from;
+       清明 and 冬至 ride the solar terms (term index 6 and 23). */
     var CAL = window.CUCKOO_CALENDAR;
     var LANG = EN ? "en" : "zh";
     var FEST = {
@@ -145,61 +147,235 @@
         f: { newyear: ["New Year's Day", "New Year", "A clean page for the year."], valentine: ["Valentine's Day", "Valentine's", "Book the table before it fills."], easter: ["Easter", "Easter", "Hide the eggs before breakfast."], halloween: ["Halloween", "Halloween", "Sweets by the door, and mind the pumpkins."], thanksgiving: ["Thanksgiving", "Thanksgiving", "Set an extra place at the table."], xmas: ["Christmas", "Christmas", "Time to start the gift list."] } }
     };
     var day0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    var Y0 = day0.getFullYear(), i;
+    function festDate(key, yi) {
+      if (key === "qingming" || key === "dongzhi") {
+        var ti = key === "qingming" ? 6 : 23, td = CAL.termDays[yi];
+        return td ? new Date(CAL.from + yi, ti >> 1, +td.substr(ti * 2, 2)) : null;
+      }
+      var s = CAL[LANG][key];
+      return s && yi >= 0 && yi * 4 + 4 <= s.length ? new Date(CAL.from + yi, +s.substr(yi * 4, 2) - 1, +s.substr(yi * 4 + 2, 2)) : null;
+    }
     function nextFestDate(key) {
-      var list = CAL[LANG][key];
-      if (!list) return null;
-      for (var i = 0; i < list.length; i++) {
-        var p = list[i].split("-").map(Number), d = new Date(p[0], p[1] - 1, p[2]);
+      for (var yi = Math.max(0, Y0 - CAL.from); yi < CAL.termDays.length; yi++) {
+        var d = festDate(key, yi);
+        if (!d) return null;
         if (d >= day0) return d;
       }
       return null;
     }
-    var fest = $(".fest"), festAuto = null, festToday = null;
+    var fest = $(".fest"), wheel = $("[data-wheel]"), festAuto = null, festToday = null;
     var F = FEST[LANG].f;
     FEST[LANG].order.forEach(function (k) {
       F[k].d = nextFestDate(k);
       if (F[k].d && +F[k].d === +day0) festToday = k;
       if (F[k].d && (!festAuto || F[k].d < F[festAuto].d)) festAuto = k;
     });
-    function setFest(key) {
-      if (!fest || !F[key]) return;
-      var f = F[key], d = f.d;
-      fest.dataset.show = key;
-      $("[data-fest-name]", fest).textContent = f[0];
-      $("[data-fest-line]", fest).textContent = f[2];
-      if (d) {
-        var diff = Math.round((d - day0) / 864e5);
-        $("[data-fest-when]", fest).textContent = (diff === 0 ? T("今天", "Today") : T("还有 " + diff + " 天", "In " + diff + (diff === 1 ? " day" : " days"))) + " · " + (EN ? WEEK[d.getDay()] + ", " + md(d) : md(d) + " " + WEEK[d.getDay()]);
+    /* ring markers: zh reads each of the 24 solar terms at its next
+       occurrence (the last year's position once the data runs out),
+       en the twelve months at their first day */
+    var RING = [];
+    if (LANG === "zh") {
+      for (i = 0; i < 24; i++) {
+        var d = null, up = false, yi = Math.max(0, Y0 - CAL.from);
+        for (; yi < CAL.termDays.length; yi++) {
+          var td = new Date(CAL.from + yi, i >> 1, +CAL.termDays[yi].substr(i * 2, 2));
+          if (td >= day0) { d = td; up = true; break; }
+        }
+        if (!d) { var tdc = CAL.termDays[Math.max(0, Y0 - CAL.from)]; if (tdc) d = new Date(Y0, i >> 1, +tdc.substr(i * 2, 2)); }
+        if (d) RING.push({ d: d, n: CAL.terms[i], up: up, i: i });
       }
-      $$("[data-fest-set]", fest).forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.festSet === key)); });
+    } else {
+      for (i = 0; i < 12; i++) {
+        var m0 = new Date(Y0, i, 1);
+        if (m0 < day0) m0 = new Date(Y0 + 1, i, 1);
+        RING.push({ d: m0, n: MONTH[i], up: true });
+      }
     }
-    function fillDays() {
+    var RINGHOT = {};
+    RING.filter(function (t) { return t.up; }).sort(function (a, b) { return a.d - b.d; }).slice(0, 4).forEach(function (t) { RINGHOT[t.n] = 1; });
+    /* a festival whose dates have run out still sits on the wheel at this
+       year's position — only the countdown has nothing left to count */
+    function wheelDate(k) { return F[k].d || festDate(k, Math.max(0, Y0 - CAL.from)); }
+    var daysIn = function (y) { return Math.round((new Date(y + 1, 0, 1) - new Date(y, 0, 1)) / 864e5); };
+    var angOf = function (d) { return (d - new Date(d.getFullYear(), 0, 1)) / 864e5 / daysIn(d.getFullYear()) * Math.PI * 2; };
+
+    /* the wheel: rim, ticks and arc in SVG; labels and festival dots as
+       HTML so they sit crisply in the site's own type */
+    var svgNS = "http://www.w3.org/2000/svg";
+    var WHS = { box: 640, rim: 232, rim2: 226, tk0: 236, tk1: 244, today: 6, art: 220, step: 24, gap: 10 };
+    var WHP = { box: 346, rim: 128, rim2: 122, tk0: 132, tk1: 138, today: 4, art: 110, step: 14, gap: 7 };
+    var wg = null, arcEl = null, whP = null, arcOn = false, festSel = null;
+    var wheelGeom = function () { return root.classList.contains("portrait") ? WHP : WHS; };
+    function buildWheel() {
+      if (!wheel) return;
+      if (!wg) { wg = document.createElement("div"); wg.className = "wh-g"; wheel.appendChild(wg); }
+      var P = wheelGeom(), c = P.box / 2;
+      var pol = function (r, a) { return [c + r * Math.sin(a), c - r * Math.cos(a)]; };
+      wg.innerHTML = "";
+      var svg = document.createElementNS(svgNS, "svg");
+      svg.setAttribute("viewBox", "0 0 " + P.box + " " + P.box);
+      svg.setAttribute("class", "wh-svg");
+      svg.setAttribute("aria-hidden", "true");
+      var mk = function (tag, at) {
+        var e = document.createElementNS(svgNS, tag);
+        for (var k in at) e.setAttribute(k, at[k]);
+        svg.appendChild(e); return e;
+      };
+      mk("circle", { class: "wh-rim", cx: c, cy: c, r: P.rim });
+      mk("circle", { class: "wh-rim2", cx: c, cy: c, r: P.rim2 });
+      /* every label is measured (unscaled CSS px) and seated by a support
+         function: its edge in the outward direction u(θ) stays a gap inside
+         the inner rim — or a gap outside the ticks for ring labels */
+      var sup = function (a, w, h) { return Math.abs(Math.sin(a)) * w / 2 + Math.abs(Math.cos(a)) * h / 2; };
+      var placed = [];
+      var meets = function (b, p) { return Math.min(b.r, p.r) - Math.max(b.l, p.l) > 0.5 && Math.min(b.b, p.b) - Math.max(b.t, p.t) > 0.5; };
+      var hit = function (b) { return placed.some(function (p) { return meets(b, p); }); };
+      RING.forEach(function (t) {
+        var a = angOf(t.d), p0 = pol(P.tk0, a), p1 = pol(P.tk1, a);
+        mk("line", { class: "wh-tick", x1: p0[0], y1: p0[1], x2: p1[0], y2: p1[1] });
+        /* 清明 and 冬至 are solar terms AND festivals: the outer term label
+           is the festival's button, no inner duplicate */
+        var tf = LANG === "zh" && (t.i === 6 || t.i === 23);
+        var l = tf ? document.createElement("button") : document.createElement("span");
+        if (tf) { l.type = "button"; l.dataset.festSet = t.i === 6 ? "qingming" : "dongzhi"; l.setAttribute("aria-pressed", "false"); }
+        l.className = "wh-tl" + (tf ? " wh-tf" : "") + (RINGHOT[t.n] && !tf ? " hot" : "");
+        l.textContent = t.n;
+        wg.appendChild(l);
+        var w = l.offsetWidth, h = l.offsetHeight;
+        var rc = P.tk1 + P.gap + sup(a, w, h), q = pol(rc, a);
+        l.style.left = q[0] + "px"; l.style.top = q[1] + "px";
+        placed.push({ l: q[0] - w / 2, r: q[0] + w / 2, t: q[1] - h / 2, b: q[1] + h / 2 });
+      });
+      var tp = pol(P.rim, angOf(day0));
+      mk("circle", { class: "wh-today", cx: tp[0], cy: tp[1], r: P.today });
+      arcEl = mk("path", { class: "wh-arc", fill: "none" });
+      wg.appendChild(svg);
+      var flabs = [];
+      FEST[LANG].order.forEach(function (k) {
+        var wd = wheelDate(k);
+        if (!wd) return;
+        var a = angOf(wd), q = pol(P.rim, a);
+        var dot = document.createElement("button");
+        dot.type = "button"; dot.className = "wh-dot"; dot.dataset.festSet = k;
+        dot.title = F[k][0]; dot.setAttribute("aria-label", F[k][0]); dot.setAttribute("aria-pressed", "false");
+        dot.style.left = q[0] + "px"; dot.style.top = q[1] + "px";
+        wg.appendChild(dot);
+        if (LANG === "zh" && (k === "qingming" || k === "dongzhi")) return;
+        var b = document.createElement("button");
+        b.type = "button"; b.className = "wh-fl"; b.dataset.festSet = k;
+        b.textContent = F[k][1]; b.setAttribute("aria-pressed", "false");
+        wg.appendChild(b);
+        flabs.push({ el: b, a: a });
+      });
+      /* seat each label by the support function, then keep its corners
+         inside rim2-4 and clear of the illustration box (inflated by the
+         gap); label collisions step inward, a seat inside the art cone
+         slips outward into the pocket beside the illustration */
+      var ah = P.art / 2 + P.gap, artB = { l: c - ah, r: c + ah, t: c - ah, b: c + ah };
+      flabs.sort(function (x, y) { return x.a - y.a; });
+      flabs.forEach(function (f) {
+        var w = f.el.offsetWidth, h = f.el.offsetHeight;
+        var ext = sup(f.a, w, h);
+        /* largest radius whose box corners still sit inside rim2-4 */
+        var rMax = -ext + Math.sqrt(ext * ext + (P.rim2 - 5) * (P.rim2 - 5) - (w * w + h * h) / 4);
+        var r0 = Math.min(P.rim2 - P.gap - ext, rMax);
+        if (LANG === "en" && f.el.dataset.festSet === "newyear") r0 -= P.step;
+        var q = null, box = null;
+        var tryR = function (r) {
+          var p2 = pol(r, f.a);
+          var b = { l: p2[0] - w / 2, r: p2[0] + w / 2, t: p2[1] - h / 2, b: p2[1] + h / 2 };
+          if (meets(b, artB)) return -1;
+          if (!hit(b)) { q = p2; box = b; return 1; }
+          return 0;
+        };
+        var r = r0;
+        for (; r > 0; r -= 1) if (tryR(r) !== 0) break;
+        if (!box) for (r = r0 + 1; r <= rMax; r += 1) if (tryR(r) === 1) break;
+        if (!box) { q = pol(r0, f.a); box = { l: q[0] - w / 2, r: q[0] + w / 2, t: q[1] - h / 2, b: q[1] + h / 2 }; }
+        f.el.style.left = q[0] + "px"; f.el.style.top = q[1] + "px";
+        placed.push(box);
+      });
+    }
+    function paintArc(key, animate) {
+      if (!arcEl || !key || !F[key] || !wheelDate(key)) return;
+      var P = wheelGeom(), c = P.box / 2;
+      var a0 = angOf(day0), a1 = angOf(wheelDate(key)), dt = a1 - a0;
+      while (dt < 0) dt += Math.PI * 2;
+      var p0 = [c + P.rim * Math.sin(a0), c - P.rim * Math.cos(a0)];
+      var p1 = [c + P.rim * Math.sin(a1), c - P.rim * Math.cos(a1)];
+      arcEl.setAttribute("d", "M" + p0[0].toFixed(1) + " " + p0[1].toFixed(1) + " A" + P.rim + " " + P.rim + " 0 " + (dt > Math.PI ? 1 : 0) + " 1 " + p1[0].toFixed(1) + " " + p1[1].toFixed(1));
+      var L = Math.max(1, P.rim * dt);
+      arcEl.style.transition = "none";
+      arcEl.style.strokeDasharray = L + " " + (L + 2);
+      arcEl.style.strokeDashoffset = arcOn && !animate ? "0" : L;
+      void arcEl.getBoundingClientRect();
+      arcEl.style.transition = "";
+      if (arcOn && animate) arcEl.style.strokeDashoffset = "0";
+    }
+    function fillDays(sel) {
       var ol = $("[data-days]");
       if (!ol) return;
       var evts = [];
       FEST[LANG].order.forEach(function (k) { if (F[k].d) evts.push({ d: F[k].d, n: F[k][0] }); });
-      if (LANG === "zh") CAL.terms.forEach(function (t) {
-        var p = t[0].split("-").map(Number), d = new Date(p[0], p[1] - 1, p[2]);
-        if (d >= day0) evts.push({ d: d, n: t[1] });
-      });
+      if (LANG === "zh") RING.forEach(function (t) { if (t.up) evts.push({ d: t.d, n: t.n }); });
       evts.sort(function (a, b) { return a.d - b.d; });
-      var seen = {}, out = [], lead = F[festToday || festAuto];
+      var seen = {}, out = [], lead = sel ? F[sel][0] : null;
       evts.forEach(function (e) {
-        var k = e.d.toISOString() + "|" + e.n;
-        if (seen[k] || (lead && e.n === lead[0])) return;
+        var k = e.d.getFullYear() + "-" + e.d.getMonth() + "-" + e.d.getDate() + "|" + e.n;
+        if (seen[k] || (lead && e.n === lead)) return;
         seen[k] = 1; out.push(e);
       });
-      ol.innerHTML = out.slice(0, 5).map(function (e) {
+      ol.innerHTML = out.slice(0, root.classList.contains("portrait") ? 3 : 4).map(function (e) {
         return "<li><time>" + md(e.d) + "</time><b>" + e.n + "</b><span>" + WEEK[e.d.getDay()] + "</span></li>";
       }).join("");
     }
+    function setFest(key) {
+      if (!fest || !F[key]) return;
+      festSel = key;
+      var f = F[key], d = f.d;
+      if (wheel) wheel.dataset.show = key;
+      $("[data-fest-name]", fest).textContent = f[0];
+      $("[data-fest-line]", fest).textContent = f[2];
+      if (d) {
+        var diff = Math.round((d - day0) / 864e5);
+        $(".fest-count", fest).classList.toggle("today", diff === 0);
+        $("[data-fest-num]", fest).textContent = diff === 0 ? T("今天", "Today") : String(diff);
+        $("[data-fest-unit]", fest).textContent = diff === 0 ? "" : T("天", diff === 1 ? "day" : "days");
+        $("[data-fest-when]", fest).textContent = EN ? WEEK[d.getDay()] + ", " + md(d) : md(d) + " " + WEEK[d.getDay()];
+      } else {
+        $(".fest-count", fest).classList.remove("today");
+        $("[data-fest-num]", fest).textContent = "";
+        $("[data-fest-unit]", fest).textContent = "";
+        $("[data-fest-when]", fest).textContent = "";
+      }
+      $$("[data-fest-set]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.festSet === key)); });
+      fillDays(key);
+      paintArc(key, arcOn);
+    }
     if (fest) {
-      $$("[data-fest-set]", fest).forEach(function (b) { b.addEventListener("click", function () { setFest(b.dataset.festSet); }); });
+      buildWheel();
+      if (wheel) wheel.addEventListener("click", function (e) {
+        var b = e.target.closest("[data-fest-set]");
+        if (b && wheel.contains(b)) setFest(b.dataset.festSet);
+      });
       setFest(festToday || festAuto);
-      fillDays();
+      var season = document.getElementById("season");
+      if (season && "MutationObserver" in window) {
+        var mo = new MutationObserver(function () {
+          if (season.classList.contains("in") && !arcOn) { arcOn = true; paintArc(festSel, true); mo.disconnect(); }
+        });
+        mo.observe(season, { attributes: true, attributeFilter: ["class"] });
+      }
+      whP = root.classList.contains("portrait");
+      window.addEventListener("demo:fit", function () {
+        var p = root.classList.contains("portrait");
+        if (p !== whP) { whP = p; buildWheel(); paintArc(festSel, false); }
+        fillDays(festSel);
+      });
       var slot = $("[data-egg-slot]");
-      if (festToday && slot) {
-        var art = $(".egg-" + festToday, fest);
+      if (festToday && slot && wheel) {
+        var art = $(".egg-" + festToday, wheel);
         if (art) { var c = art.cloneNode(true); c.setAttribute("class", "egg-art egg-" + festToday); slot.appendChild(c); slot.classList.add("on"); }
       }
     }
@@ -325,14 +501,14 @@
     function inkField(rec) {
       var gw = Math.max(2, Math.ceil(rec.cw / 2)), gh = Math.max(2, Math.ceil(rec.ch / 2));
       var w = rec.w, h = rec.h, pad = rec.pad, dur = rec.dur, seed = rec.seed;
-      var ew = w - 2 * pad, eh = h - 2 * pad;
+      var ew = w - pad[3] - pad[1], eh = h - pad[0] - pad[2];
       var rng = mulberry(seed);
       var n = Math.max(2, Math.min(7, Math.round(ew / (eh * 1.8))));
       var horiz = ew >= eh, seeds = [];
       for (var i = 0; i < n; i++) {
         var fa = (i + 0.5) / n + (rng() - 0.5) * 0.5 / n;
         var fb = 0.5 + (rng() - 0.5) * 0.6;
-        seeds.push({ x: pad + (horiz ? fa * ew : fb * ew), y: pad + (horiz ? fb * eh : fa * eh), st: rng() });
+        seeds.push({ x: pad[3] + (horiz ? fa * ew : fb * ew), y: pad[0] + (horiz ? fb * eh : fa * eh), st: rng() });
       }
       var est = Math.sqrt(ew * ew + eh * eh) * 0.5;
       for (i = 0; i < n; i++) seeds[i].st *= 0.25 * est;
@@ -394,10 +570,11 @@
       if (!art) { el.classList.add("ink-on"); return; }
       var cs = getComputedStyle(el);
       var s = parseFloat(getComputedStyle(root).getPropertyValue("--s")) || 1;
-      var pad = parseFloat(cs.getPropertyValue("--ink-pad")) || 0;
+      var pv = (cs.getPropertyValue("--ink-pad") || "").trim().split(/\s+/).map(parseFloat).filter(function (n) { return !isNaN(n); });
+      var pad = [pv[0] || 0, pv.length > 1 ? pv[1] : pv[0] || 0, pv.length > 2 ? pv[2] : pv[0] || 0, pv.length > 3 ? pv[3] : pv.length > 1 ? pv[1] : pv[0] || 0];
       var ar = art.getBoundingClientRect(), er = el.getBoundingClientRect();
-      var x = (er.left - ar.left) / s - pad, y = (er.top - ar.top) / s - pad;
-      var w = er.width / s + 2 * pad, h = er.height / s + 2 * pad;
+      var x = (er.left - ar.left) / s - pad[3], y = (er.top - ar.top) / s - pad[0];
+      var w = er.width / s + pad[3] + pad[1], h = er.height / s + pad[0] + pad[2];
       if (!(w > 4 && h > 4)) { el.classList.add("ink-on"); return; }
       var dpr = Math.min(window.devicePixelRatio || 1, 2);
       var q = Math.min(1, Math.sqrt(MAXPX / (w * s * dpr * h * s * dpr)));
