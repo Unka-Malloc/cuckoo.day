@@ -127,7 +127,7 @@
       wx.dataset.wx = key;
       var temp = $("[data-wx-temp]", wx), note = $("[data-wx-note]", wx);
       temp.innerHTML = WX[key][1]; note.innerHTML = WX[key][2];
-      [temp, note].forEach(function (n) { n.classList.remove("wx-swap"); void n.offsetWidth; n.classList.add("wx-swap"); });
+      [temp, note].forEach(function (n) { n.classList.remove("swp"); void n.offsetWidth; n.classList.add("swp"); });
       $$("[data-wx-set]", wx).forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.wxSet === key)); });
     }
     if (wx) {
@@ -205,7 +205,12 @@
     var svgNS = "http://www.w3.org/2000/svg";
     var WHS = { box: 640, rim: 232, rim2: 226, tk0: 236, tk1: 244, today: 6, art: 220, step: 24, gap: 10 };
     var WHP = { box: 346, rim: 128, rim2: 122, tk0: 132, tk1: 138, today: 4, art: 110, step: 14, gap: 7 };
-    var wg = null, arcEl = null, whP = null, arcOn = false, festSel = null;
+    var PREF_RM = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var wg = null, arcEl = null, prevEl = null, whP = null, festSel = null;
+    var arcSpan = 0, numShown = 0, arcTween = 0, arrT0 = 0;
+    var easeExpo = function (p) { return p >= 1 ? 1 : 1 - Math.pow(2, -10 * p); };
+    var easeInOut = function (p) { return p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2; };
+    var adelay = function (a, off) { return Math.round(150 + a / Math.PI / 2 * 1100 + (off || 0)) + "ms"; };
     var wheelGeom = function () { return root.classList.contains("portrait") ? WHP : WHS; };
     function buildWheel() {
       if (!wheel) return;
@@ -222,8 +227,12 @@
         for (var k in at) e.setAttribute(k, at[k]);
         svg.appendChild(e); return e;
       };
-      mk("circle", { class: "wh-rim", cx: c, cy: c, r: P.rim });
-      mk("circle", { class: "wh-rim2", cx: c, cy: c, r: P.rim2 });
+      var rim = mk("circle", { class: "wh-rim", cx: c, cy: c, r: P.rim, transform: "rotate(-90 " + c + " " + c + ")" });
+      var rim2 = mk("circle", { class: "wh-rim2", cx: c, cy: c, r: P.rim2, transform: "rotate(-90 " + c + " " + c + ")" });
+      rim.style.strokeDasharray = 2 * Math.PI * P.rim;
+      rim.style.setProperty("--c", 2 * Math.PI * P.rim);
+      rim2.style.strokeDasharray = 2 * Math.PI * P.rim2;
+      rim2.style.setProperty("--c", 2 * Math.PI * P.rim2);
       /* every label is measured (unscaled CSS px) and seated by a support
          function: its edge in the outward direction u(θ) stays a gap inside
          the inner rim — or a gap outside the ticks for ring labels */
@@ -233,7 +242,8 @@
       var hit = function (b) { return placed.some(function (p) { return meets(b, p); }); };
       RING.forEach(function (t) {
         var a = angOf(t.d), p0 = pol(P.tk0, a), p1 = pol(P.tk1, a);
-        mk("line", { class: "wh-tick", x1: p0[0], y1: p0[1], x2: p1[0], y2: p1[1] });
+        var tk = mk("line", { class: "wh-tick", x1: p0[0], y1: p0[1], x2: p1[0], y2: p1[1] });
+        tk.style.setProperty("--ad", adelay(a));
         /* 清明 and 冬至 are solar terms AND festivals: the outer term label
            is the festival's button, no inner duplicate */
         var tf = LANG === "zh" && (t.i === 6 || t.i === 23);
@@ -241,6 +251,9 @@
         if (tf) { l.type = "button"; l.dataset.festSet = t.i === 6 ? "qingming" : "dongzhi"; l.setAttribute("aria-pressed", "false"); }
         l.className = "wh-tl" + (tf ? " wh-tf" : "") + (RINGHOT[t.n] && !tf ? " hot" : "");
         l.textContent = t.n;
+        l.style.setProperty("--ad", adelay(a));
+        l.style.setProperty("--dx", (6 * Math.sin(a)).toFixed(1) + "px");
+        l.style.setProperty("--dy", (-6 * Math.cos(a)).toFixed(1) + "px");
         wg.appendChild(l);
         var w = l.offsetWidth, h = l.offsetHeight;
         var rc = P.tk1 + P.gap + sup(a, w, h), q = pol(rc, a);
@@ -248,8 +261,10 @@
         placed.push({ l: q[0] - w / 2, r: q[0] + w / 2, t: q[1] - h / 2, b: q[1] + h / 2 });
       });
       var tp = pol(P.rim, angOf(day0));
+      mk("circle", { class: "wh-ripple", cx: tp[0], cy: tp[1], r: P.today });
       mk("circle", { class: "wh-today", cx: tp[0], cy: tp[1], r: P.today });
       arcEl = mk("path", { class: "wh-arc", fill: "none" });
+      prevEl = mk("path", { class: "wh-prev", fill: "none" });
       wg.appendChild(svg);
       var flabs = [];
       FEST[LANG].order.forEach(function (k) {
@@ -260,11 +275,13 @@
         dot.type = "button"; dot.className = "wh-dot"; dot.dataset.festSet = k;
         dot.title = F[k][0]; dot.setAttribute("aria-label", F[k][0]); dot.setAttribute("aria-pressed", "false");
         dot.style.left = q[0] + "px"; dot.style.top = q[1] + "px";
+        dot.style.setProperty("--ad", adelay(a));
         wg.appendChild(dot);
         if (LANG === "zh" && (k === "qingming" || k === "dongzhi")) return;
         var b = document.createElement("button");
         b.type = "button"; b.className = "wh-fl"; b.dataset.festSet = k;
         b.textContent = F[k][1]; b.setAttribute("aria-pressed", "false");
+        b.style.setProperty("--ad", adelay(a, 120));
         wg.appendChild(b);
         flabs.push({ el: b, a: a });
       });
@@ -297,22 +314,65 @@
         placed.push(box);
       });
     }
-    function paintArc(key, animate) {
-      if (!arcEl || !key || !F[key] || !wheelDate(key)) return;
-      var P = wheelGeom(), c = P.box / 2;
-      var a0 = angOf(day0), a1 = angOf(wheelDate(key)), dt = a1 - a0;
+    function spanOf(k) {
+      var wd = F[k] && wheelDate(k);
+      if (!wd) return 0;
+      var dt = angOf(wd) - angOf(day0);
       while (dt < 0) dt += Math.PI * 2;
-      var p0 = [c + P.rim * Math.sin(a0), c - P.rim * Math.cos(a0)];
-      var p1 = [c + P.rim * Math.sin(a1), c - P.rim * Math.cos(a1)];
-      arcEl.setAttribute("d", "M" + p0[0].toFixed(1) + " " + p0[1].toFixed(1) + " A" + P.rim + " " + P.rim + " 0 " + (dt > Math.PI ? 1 : 0) + " 1 " + p1[0].toFixed(1) + " " + p1[1].toFixed(1));
-      var L = Math.max(1, P.rim * dt);
-      arcEl.style.transition = "none";
-      arcEl.style.strokeDasharray = L + " " + (L + 2);
-      arcEl.style.strokeDashoffset = arcOn && !animate ? "0" : L;
-      void arcEl.getBoundingClientRect();
-      arcEl.style.transition = "";
-      if (arcOn && animate) arcEl.style.strokeDashoffset = "0";
+      return dt;
     }
+    function arcD(span, rad) {
+      var P = wheelGeom(), c = P.box / 2, r = rad || P.rim;
+      var a0 = angOf(day0), a1 = a0 + span;
+      var p0 = [c + r * Math.sin(a0), c - r * Math.cos(a0)];
+      var p1 = [c + r * Math.sin(a1), c - r * Math.cos(a1)];
+      return "M" + p0[0].toFixed(1) + " " + p0[1].toFixed(1) + " A" + r + " " + r + " 0 " + (span > Math.PI ? 1 : 0) + " 1 " + p1[0].toFixed(1) + " " + p1[1].toFixed(1);
+    }
+    function drawArc(span) {
+      if (!arcEl || (wheel && !wheel.classList.contains("on"))) return;
+      arcEl.setAttribute("d", span < 0.02 ? "" : arcD(span));
+    }
+    /* arc span and countdown are one tween: a mid-tween click restarts
+       from whatever is on screen */
+    function tweenArc(to, dur, ease, numTo) {
+      cancelAnimationFrame(arcTween);
+      var s0 = arcSpan, n0 = numShown, t0 = performance.now();
+      var numEl = fest && $("[data-fest-num]", fest);
+      (function fr() {
+        var p = Math.min(1, (performance.now() - t0) / dur), e = ease(p);
+        arcSpan = s0 + (to - s0) * e;
+        drawArc(arcSpan);
+        if (numTo != null && numEl) { numShown = Math.round(n0 + (numTo - n0) * e); numEl.textContent = String(numShown); }
+        if (p < 1) arcTween = requestAnimationFrame(fr);
+      })();
+    }
+    /* each shape of the active illustration draws itself, .acc accents last */
+    function drawEgg(svg, dur, stag) {
+      if (!svg || PREF_RM) return;
+      var seq = [], acc = [];
+      Array.prototype.forEach.call(svg.querySelectorAll("path,circle,ellipse,rect,line,polyline,polygon"), function (s2) {
+        (s2.classList.contains("acc") ? acc : seq).push(s2);
+      });
+      seq = seq.concat(acc);
+      var n = seq.length || 1, st = stag == null ? 70 : stag, dd = dur || 900;
+      seq.forEach(function (s2, i) {
+        var L = s2.getTotalLength();
+        s2.style.strokeDasharray = L; s2.style.strokeDashoffset = L;
+        void s2.getBoundingClientRect();
+        s2.style.transition = "stroke-dashoffset " + dd + "ms ease-out " + (i * st) + "ms";
+        s2.style.strokeDashoffset = "0";
+      });
+      Array.prototype.forEach.call(svg.querySelectorAll("text"), function (s2) {
+        s2.style.opacity = "0";
+        s2.style.transition = "opacity .5s ease " + (n * st) + "ms";
+        s2.style.opacity = "1";
+      });
+      setTimeout(function () {
+        seq.forEach(function (s2) { s2.style.strokeDasharray = s2.style.strokeDashoffset = s2.style.transition = ""; });
+        Array.prototype.forEach.call(svg.querySelectorAll("text"), function (s2) { s2.style.opacity = s2.style.transition = ""; });
+      }, dd + n * st + 550);
+    }
+    function sw(el) { if (el) { el.classList.remove("rv", "swp"); void el.offsetWidth; el.classList.add("swp"); } }
     function fillDays(sel) {
       var ol = $("[data-days]");
       if (!ol) return;
@@ -329,48 +389,135 @@
       ol.innerHTML = out.slice(0, root.classList.contains("portrait") ? 3 : 4).map(function (e) {
         return "<li><time>" + md(e.d) + "</time><b>" + e.n + "</b><span>" + WEEK[e.d.getDay()] + "</span></li>";
       }).join("");
+      var later = wheel && wheel.classList.contains("on") && !PREF_RM;
+      Array.prototype.forEach.call(ol.children, function (li, i) {
+        if (later) { li.classList.add("swp"); li.style.animationDelay = i * 50 + "ms"; }
+        else { li.classList.add("rv"); li.style.setProperty("--d", 3520 + i * 160 + "ms"); }
+      });
     }
     function setFest(key) {
       if (!fest || !F[key]) return;
       festSel = key;
       var f = F[key], d = f.d;
-      if (wheel) wheel.dataset.show = key;
-      $("[data-fest-name]", fest).textContent = f[0];
-      $("[data-fest-line]", fest).textContent = f[2];
+      var live = wheel && wheel.classList.contains("on") && !PREF_RM;
+      var nameEl = $("[data-fest-name]", fest);
+      if (nameEl.textContent !== f[0]) { nameEl.textContent = f[0]; if (live) inkReplay(nameEl); }
+      var lineEl = $("[data-fest-line]", fest);
+      lineEl.textContent = f[2];
+      var whenEl = $("[data-fest-when]", fest);
+      if (wheel) {
+        var oldK = wheel.dataset.show;
+        var oldS = oldK && oldK !== key ? $(".egg-" + oldK, wheel) : null;
+        if (oldS && live) {
+          oldS.style.transition = "opacity .18s"; oldS.style.opacity = "1";
+          void oldS.offsetWidth;
+          wheel.dataset.show = key;
+          oldS.style.opacity = "0";
+          setTimeout(function () { oldS.style.opacity = ""; oldS.style.transition = ""; }, 250);
+        } else wheel.dataset.show = key;
+        var nw = $(".egg-" + key, wheel);
+        if (nw) { nw.style.opacity = ""; nw.style.transition = ""; if (live) { wheel.classList.add("egg-in"); drawEgg(nw, 500, Math.min(70, Math.max(6, Math.round(200 / Math.max(1, nw.querySelectorAll("path,circle,ellipse,rect,line,polyline,polygon").length))))); } }
+      }
       if (d) {
         var diff = Math.round((d - day0) / 864e5);
         $(".fest-count", fest).classList.toggle("today", diff === 0);
-        $("[data-fest-num]", fest).textContent = diff === 0 ? T("今天", "Today") : String(diff);
+        var numEl = $("[data-fest-num]", fest);
         $("[data-fest-unit]", fest).textContent = diff === 0 ? "" : T("天", diff === 1 ? "day" : "days");
-        $("[data-fest-when]", fest).textContent = EN ? WEEK[d.getDay()] + ", " + md(d) : md(d) + " " + WEEK[d.getDay()];
+        whenEl.textContent = EN ? WEEK[d.getDay()] + ", " + md(d) : md(d) + " " + WEEK[d.getDay()];
+        var seal = $(".seal", fest);
+        if (diff === 0) {
+          numShown = 0; numEl.textContent = T("今天", "Today");
+          if (!seal) { seal = document.createElement("b"); seal.className = "seal"; $(".fest-count", fest).appendChild(seal); }
+          seal.textContent = f[1];
+          seal.style.setProperty("--sd", arrT0 ? Math.max(0, 2500 - (performance.now() - arrT0)) + "ms" : "2400ms");
+        } else if (seal) seal.remove();
+        if (live) {
+          if (diff > 0) tweenArc(spanOf(key), 700, easeInOut, diff);
+          else { tweenArc(spanOf(key), 700, easeInOut, null); sw(numEl); }
+          [whenEl, lineEl].forEach(sw);
+          var unit = $("[data-fest-unit]", fest); if (unit) sw(unit);
+        } else {
+          numShown = diff; numEl.textContent = diff === 0 ? T("今天", "Today") : String(diff);
+          arcSpan = spanOf(key); drawArc(arcSpan);
+        }
       } else {
         $(".fest-count", fest).classList.remove("today");
+        var seal2 = $(".seal", fest); if (seal2) seal2.remove();
+        numShown = 0;
         $("[data-fest-num]", fest).textContent = "";
         $("[data-fest-unit]", fest).textContent = "";
-        $("[data-fest-when]", fest).textContent = "";
+        whenEl.textContent = "";
+        arcSpan = spanOf(key); drawArc(arcSpan);
       }
       $$("[data-fest-set]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.festSet === key)); });
       fillDays(key);
-      paintArc(key, arcOn);
     }
+    function showPrev(k) {
+      if (!prevEl || !F[k]) return;
+      var span = spanOf(k);
+      if (span < 0.02) return;
+      var P2 = wheelGeom();
+      prevEl.setAttribute("d", arcD(span, (P2.rim + P2.rim2) / 2));
+      prevEl.classList.add("on");
+    }
+    function hidePrev() { if (prevEl) prevEl.classList.remove("on"); }
     if (fest) {
       buildWheel();
-      if (wheel) wheel.addEventListener("click", function (e) {
-        var b = e.target.closest("[data-fest-set]");
-        if (b && wheel.contains(b)) setFest(b.dataset.festSet);
-      });
+      if (PREF_RM && wheel) wheel.classList.add("on", "done", "egg-in");
+      if (wheel) {
+        wheel.addEventListener("click", function (e) {
+          var b = e.target.closest("[data-fest-set]");
+          if (b && wheel.contains(b)) setFest(b.dataset.festSet);
+        });
+        wheel.addEventListener("pointerover", function (e) {
+          var b = e.target.closest("[data-fest-set]");
+          if (b && wheel.contains(b)) showPrev(b.dataset.festSet);
+        });
+        wheel.addEventListener("pointerout", function (e) {
+          var b = e.target.closest("[data-fest-set]");
+          if (b && !(e.relatedTarget && b.contains(e.relatedTarget))) hidePrev();
+        });
+        wheel.addEventListener("focusin", function (e) {
+          var b = e.target.closest("[data-fest-set]");
+          if (b) showPrev(b.dataset.festSet);
+        });
+        wheel.addEventListener("focusout", function (e) {
+          if (e.target.closest("[data-fest-set]")) hidePrev();
+        });
+      }
+      /* the left column's pieces reveal on their own delays once in view */
+      var num0 = $("[data-fest-num]", fest), unt0 = $("[data-fest-unit]", fest),
+          whn0 = $("[data-fest-when]", fest), lin0 = $("[data-fest-line]", fest);
+      if (num0) { num0.classList.add("rv"); num0.style.setProperty("--d", "2800ms"); }
+      if (unt0) { unt0.classList.add("rv"); unt0.style.setProperty("--d", "4600ms"); }
+      if (whn0) { whn0.classList.add("rv"); whn0.style.setProperty("--d", "3200ms"); }
+      if (lin0) { lin0.classList.add("rv"); lin0.style.setProperty("--d", "3360ms"); }
       setFest(festToday || festAuto);
       var season = document.getElementById("season");
+      function arrive() {
+        if (!wheel) return;
+        arrT0 = performance.now();
+        if (PREF_RM) { wheel.classList.add("on", "done", "egg-in"); drawArc(arcSpan); return; }
+        wheel.classList.add("on");
+        var key = festSel, diff = F[key] && F[key].d ? Math.round((F[key].d - day0) / 864e5) : 0;
+        setTimeout(function () { tweenArc(spanOf(key), 1000, easeExpo, diff > 0 ? diff : null); }, 1400);
+        setTimeout(function () { wheel.classList.add("egg-in"); var s = $(".egg-" + key, wheel); if (s) drawEgg(s, 900, 70); }, 1400);
+        setTimeout(function () { wheel.classList.add("done"); }, 2900);
+      }
       if (season && "MutationObserver" in window) {
         var mo = new MutationObserver(function () {
-          if (season.classList.contains("in") && !arcOn) { arcOn = true; paintArc(festSel, true); mo.disconnect(); }
+          if (season.classList.contains("in")) { mo.disconnect(); arrive(); }
         });
         mo.observe(season, { attributes: true, attributeFilter: ["class"] });
-      }
+        if (season.classList.contains("in")) { mo.disconnect(); arrive(); }
+      } else if (season && season.classList.contains("in")) arrive();
       whP = root.classList.contains("portrait");
       window.addEventListener("demo:fit", function () {
         var p = root.classList.contains("portrait");
-        if (p !== whP) { whP = p; buildWheel(); paintArc(festSel, false); }
+        if (p !== whP) {
+          whP = p; buildWheel();
+          arcSpan = spanOf(festSel); drawArc(arcSpan);
+        }
         fillDays(festSel);
       });
       var slot = $("[data-egg-slot]");
@@ -650,6 +797,24 @@
       inkRecs.forEach(function (rec) {
         if (rec.page === page && rec.state === "prepared") { rec.state = "playing"; rec.t0 = t0; playing.push(rec); }
       });
+      if (playing.length && !rafOn) { rafOn = true; requestAnimationFrame(inkTick); }
+    }
+
+    /* re-condense one element after its text changed (e.g. festival name) */
+    function inkReplay(el) {
+      if (!inkOK || !el) return;
+      var rec = recOf.get(el);
+      if (rec) {
+        var i = playing.indexOf(rec);
+        if (i > -1) playing.splice(i, 1);
+        rec.cv.remove();
+        inkRecs.splice(inkRecs.indexOf(rec), 1);
+        recOf.delete(el);
+        el.classList.remove("ink-on");
+      }
+      inkPrepare(el);
+      var nr = recOf.get(el);
+      if (nr && nr.state === "prepared") { nr.state = "playing"; nr.t0 = performance.now(); playing.push(nr); }
       if (playing.length && !rafOn) { rafOn = true; requestAnimationFrame(inkTick); }
     }
 

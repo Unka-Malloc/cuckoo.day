@@ -85,8 +85,8 @@ figcaption { margin-top: 10px; font: 500 12px var(--zh); color: var(--ink3); let
 .wx-fig { position: relative; padding: 4px 8px 0 0; }
 .wx-fig .num { position: relative; display: block; font-size: 124px; line-height: 1; letter-spacing: -.04em; color: var(--ink); white-space: nowrap; transition: color .6s; }
 .wx-row p { font: 400 17px/1.7 var(--zh); color: var(--ink2); }
-.wx-swap { animation: wxswap .5s ease both; }
-@keyframes wxswap { from { opacity: 0; } to { opacity: 1; } }
+.swp { animation: swp .5s ease both; }
+@keyframes swp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; } }
 
 /* weather effects live inside the figure's box; overflow is clipped so they
    never reach neighbouring copy */
@@ -596,9 +596,23 @@ html[lang="en"] .fest-count.today .num { font-family: var(--latin); }
 .wh-svg { display: block; pointer-events: none; }
 .wh-rim { fill: none; stroke: var(--ink); stroke-width: 3; }
 .wh-rim2 { fill: none; stroke: var(--ink); stroke-width: 1; }
+.wheel:not(.on) .wh-rim, .wheel:not(.on) .wh-rim2 { stroke-dashoffset: var(--c); }
+.wheel.on .wh-rim { transition: stroke-dashoffset 1.1s cubic-bezier(.65, 0, .35, 1) .15s; stroke-dashoffset: 0; }
+.wheel.on .wh-rim2 { transition: stroke-dashoffset 1.1s cubic-bezier(.65, 0, .35, 1) .27s; stroke-dashoffset: 0; }
 .wh-tick { stroke: var(--rule); stroke-width: 1; }
-.wh-today { fill: var(--paper); stroke: var(--zhu); stroke-width: 2; }
-.wh-arc { stroke: var(--zhu); stroke-width: 3; stroke-linecap: round; fill: none; transition: stroke-dashoffset .9s cubic-bezier(.16, 1, .3, 1); }
+.wheel:not(.on) .wh-tick, .wheel:not(.on) .wh-tl, .wheel:not(.on) .wh-fl, .wheel:not(.on) .wh-today, .wheel:not(.on) .wh-ripple { opacity: 0; }
+.wheel:not(.on) .wh-tl { transform: translate(-50%, -50%) translate(var(--dx), var(--dy)); }
+.wheel.on .wh-tick { transition: opacity .38s ease-out var(--ad); }
+.wheel.on .wh-tl { transition: opacity .38s ease-out var(--ad), transform .38s ease-out var(--ad); }
+.wheel.on .wh-fl { transition: opacity .3s ease var(--ad); }
+.wh-today { fill: var(--paper); stroke: var(--zhu); stroke-width: 2; transform-box: fill-box; transform-origin: center; }
+.wheel:not(.on) .wh-today { transform: scale(0); }
+.wheel.on .wh-today { transition: transform .4s ease-out 1.3s; opacity: 1; }
+.wh-ripple { fill: none; stroke: var(--zhu); stroke-width: 1.2; opacity: 0; transform-box: fill-box; transform-origin: center; }
+.wheel.on .wh-ripple { animation: ripple 1s ease-out 1.3s; }
+.wh-arc { stroke: var(--zhu); stroke-width: 3; stroke-linecap: round; fill: none; }
+.wh-prev { stroke: var(--zhu); stroke-width: 1.5; fill: none; stroke-dasharray: 2 5; opacity: 0; transition: opacity .2s; }
+.wh-prev.on { opacity: .45; }
 .wh-tl { position: absolute; transform: translate(-50%, -50%); font: 500 14px var(--zh); color: var(--ink3); white-space: nowrap; }
 .wh-tl.hot { color: var(--ink); }
 .wh-tf { color: var(--zhu); }
@@ -607,13 +621,23 @@ html[lang="en"] .fest-count.today .num { font-family: var(--latin); }
 .wh-fl { position: absolute; transform: translate(-50%, -50%); font: 600 15px var(--zh); color: var(--zhu); white-space: nowrap; }
 .wh-fl:hover { color: var(--ink); }
 .wh-fl[aria-pressed="true"] { font-weight: 700; }
-.wh-dot { position: absolute; width: 14px; height: 14px; padding: 0; border-radius: 50%; background: var(--zhu); transform: translate(-50%, -50%) scale(.64); transition: transform .45s cubic-bezier(.3, 1.4, .5, 1); }
+.wh-dot { position: absolute; width: 14px; height: 14px; padding: 0; border-radius: 50%; background: var(--zhu); --ds: .64; transform: translate(-50%, -50%) scale(var(--ds)); transition: transform .45s cubic-bezier(.3, 1.4, .5, 1); }
 .wh-dot::before { content: ""; position: absolute; inset: -7px; }
-.wh-dot[aria-pressed="true"] { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 2px var(--paper); }
+.wheel:not(.on) .wh-dot { --ds: 0; }
+.wheel.on .wh-dot { animation: whpop .42s ease-out var(--ad) backwards; }
+.wheel.done .wh-dot { animation: none; }
+.wh-dot[aria-pressed="true"] { --ds: 1; box-shadow: 0 0 0 2px var(--paper); }
+@keyframes whpop { 0% { transform: translate(-50%, -50%) scale(0); } 65% { transform: translate(-50%, -50%) scale(calc(var(--ds, .64) * 1.18)); } 100% { transform: translate(-50%, -50%) scale(var(--ds, .64)); } }
+.seal { display: inline-block; margin-left: 16px; margin-bottom: 14px; padding: 3px 9px; border: 3px double var(--zhu); border-radius: 3px; color: var(--zhu); font: 700 19px var(--zh); letter-spacing: .06em; white-space: nowrap; transform: rotate(-10deg); opacity: .9; }
+.js .page:not(.in) .seal { opacity: 0; }
+.js .page.in .seal { animation: sealIn .55s cubic-bezier(.3, 1.6, .4, 1) var(--sd, 0ms) backwards; }
+@keyframes sealIn { from { transform: rotate(-10deg) scale(1.8); opacity: 0; } }
 .wh-art { position: absolute; left: 50%; top: 50%; width: 220px; height: 220px; transform: translate(-50%, -50%); }
 .wh-art .egg-art { position: absolute; inset: 0; opacity: 0; transition: opacity .5s; }
-.wheel[data-show="spring"] .egg-spring, .wheel[data-show="lantern"] .egg-lantern, .wheel[data-show="qingming"] .egg-qingming, .wheel[data-show="dragonboat"] .egg-dragonboat, .wheel[data-show="qixi"] .egg-qixi, .wheel[data-show="midautumn"] .egg-midautumn, .wheel[data-show="chongyang"] .egg-chongyang, .wheel[data-show="dongzhi"] .egg-dongzhi, .wheel[data-show="newyear"] .egg-newyear, .wheel[data-show="valentine"] .egg-valentine, .wheel[data-show="easter"] .egg-easter, .wheel[data-show="halloween"] .egg-halloween, .wheel[data-show="thanksgiving"] .egg-thanksgiving, .wheel[data-show="xmas"] .egg-xmas { opacity: 1; }
+.wheel.egg-in[data-show="spring"] .egg-spring, .wheel.egg-in[data-show="lantern"] .egg-lantern, .wheel.egg-in[data-show="qingming"] .egg-qingming, .wheel.egg-in[data-show="dragonboat"] .egg-dragonboat, .wheel.egg-in[data-show="qixi"] .egg-qixi, .wheel.egg-in[data-show="midautumn"] .egg-midautumn, .wheel.egg-in[data-show="chongyang"] .egg-chongyang, .wheel.egg-in[data-show="dongzhi"] .egg-dongzhi, .wheel.egg-in[data-show="newyear"] .egg-newyear, .wheel.egg-in[data-show="valentine"] .egg-valentine, .wheel.egg-in[data-show="easter"] .egg-easter, .wheel.egg-in[data-show="halloween"] .egg-halloween, .wheel.egg-in[data-show="thanksgiving"] .egg-thanksgiving, .wheel.egg-in[data-show="xmas"] .egg-xmas { opacity: 1; }
 .wh-art .egg-art *, .egg .egg-art * { fill: none !important; stroke: var(--ink) !important; stroke-width: 3.4 !important; stroke-linecap: round !important; stroke-linejoin: round !important; }
+.wh-art .egg-art text, .egg .egg-art text { fill: var(--ink) !important; stroke: none !important; }
+.wh-art .egg-art text.acc, .egg .egg-art text.acc { fill: var(--zhu) !important; }
 .wh-art .egg-art .det, .egg .egg-art .det { stroke-width: 2 !important; }
 .wh-art .egg-art .acc, .egg .egg-art .acc { stroke: var(--zhu) !important; stroke-width: 2.6 !important; }
 @keyframes eggbob { from { transform: translateY(0); } to { transform: translateY(-4px); } }
